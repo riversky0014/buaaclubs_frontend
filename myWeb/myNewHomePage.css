@@ -29,6 +29,7 @@
 
 #middle {
 	width: 1000px;
+	/*height: 500px;*/
 	margin: 0 auto;
 	/*border: 2px solid black;*/
 }
@@ -89,11 +90,14 @@
 }
 
 #foot {
-	height: 54px;
-	margin-top:20px;
+	height: 100px;
+	margin-top:30px;
 	width: 100%;
 	background: #1c1c1c;
 	clear: both; 
 }
 
-#signInButton {}
+.footFont {
+	color: #b4b5b7;
+	font-size: 0.8em;
+}

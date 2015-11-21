@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">-->
 
   <!-- Site Properities -->
-  <title>clubActivityEdit</title>
+  <title>clubNewActivityCreate</title>
 
   <!--<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">-->
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
@@ -51,7 +51,7 @@
   }
  		
      
-        var row = {title:document.getElementById("atitle").value,abstract:UE.getEditor('editor').getContentTxt().substring(20,0)+"...",content:UE.getEditor('editor').getContent()};
+        var row = {title:document.getElementById("atitle").value,abstract:UE.getEditor('editor').getContentTxt().substring(0,350)+"...",content:UE.getEditor('editor').getContent()};
         var jsonObj = JSON.stringify(row);
         xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/articles/detail/create",true);
         xmlhttp.setRequestHeader("Content-Type","text/plain");
@@ -71,15 +71,41 @@
   function ActivityCreate(){
   	window.location.href = "new_clubActivityCreate.html";
   }
+  function search()
+  {
+  	alert("该功能还在开发中");
+  }
+   function replacePicAndName(){
+  	var oldPic = document.getElementById('middle').getElementsByTagName('img')[0];
+  	var Pic = document.createElement('img');
+  	Pic.setAttribute('src',sessionStorage.pic_head);
+  	oldPic.parentNode.replaceChild(Pic,oldPic);
+  	var oldName = document.getElementById('logContainer').getElementsByTagName('a')[0];
+  	oldName.innerHTML = sessionStorage.name;
+  }
+  	function check(){
+  		if(sessionStorage.clubsigned==undefined)
+  			window.location.href = "clubSignIn.html";
+  	}
   </script>
 
 
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 
 
 
 </head>
 
 <body>
+<script type="text/javascript">check();</script>
 	<div>
 		<div id="gy_masthead">
 				<!-- <div class="ui fluid catagory search" style="margin-top: 8px; margin-right: 155px; float:right;">
@@ -94,11 +120,11 @@
 				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 850px;">
 					<i class="search icon"></i>
 					<input type="text" placeholder="Search~~~" />
-					<div class="ui inverted yellow button">Search</div>
+					<div class="ui inverted yellow button" onclick = "search()">Search</div>
 				</div>
 		</div>
 
-		<div id="middle">
+		<div id="middle" > 
 			<div class="blank"></div>
 			<div id="container">
 
@@ -124,28 +150,29 @@
 					</div>
 
 					<div class="buttonContainer" style="margin-top: 15px;">
-						<div class="ui animated teal button" tabindex="0" style="width: 100%;">
-							<div class="visible content" onclick="ActivityCreate()"> 创 建 新 的 活 动 </div>
+						<!-- <div class="ui animated teal button" tabindex="0" style="width: 100%;" onclick="ActivityCreate()">
+							<div class="visible content" > 创 建 新 的 活 动 </div>
 							<div class="hidden content">
 								<i class="add circle icon"></i>
 							</div>
 						</div>
 
-						<div class="ui animated teal button" tabindex="0" style="width: 100%;">
+						<div class="ui animated teal button" tabindex="0" style="width: 100%;" onclick="clubDefault()">
 							<div class="visible content"> 查 看 所 有 活 动 </div>
-							<div class="hidden content" onclick="clubDefault()">
+							<div class="hidden content" >
 								<i class="paw icon"></i>
 							</div>
-						</div>
-						<!-- <div class="fluid ui vertical buttons">
-							<button class="large fluid ui black labeled icon button">  活动广场 
-								<i class="announcement icon"></i>
-							</button>
-
-							<button class="large fluid ui black labeled icon button" style="margin-top: 15px;"> 社团荟萃
-								 <i class="users icon"></i>
-							</button>
 						</div> -->
+						<div class="buttonContainer">
+							<div class="ui vertical labeled icon buttons" style="width: 100%;">
+								<div class="ui teal labeled icon button" onclick="clubDefault()">后 台 首 页
+								 	<i class="paw icon"></i>
+								</div>
+								<div class="ui teal labeled icon button" style="background-color:#009d95;" onclick="ActivityCreate()">创 建 活 动
+									<i class="add circle icon"></i>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -170,12 +197,12 @@
 
 				<!-- <div id="logblockleft"></div> -->
 
-				<div id="news">
+				<div id="news" style="heigth:700px">
 					<div class="newsContainer">
 					<!--start of ueditor-->
 						<div>
 		    				<h1>编辑</h1>
-		    				<p>标题</p><input type ="text" id = "atitle" align="middle" maxlength = "20" >
+		    				<p>标题</p><input type ="text" id = "atitle" align="middle" >
 		   					<script id="editor" type="text/plain" style="width:100%;">
 		    
 		    				</script>
@@ -225,6 +252,7 @@
 						    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
 						    var ue = UE.getEditor('editor');
 
+						    UE.getEditor('editor',{initialFrameHeight :900});
 
 						    function isFocus(e){
 						        alert(UE.getEditor('editor').isFocus());
@@ -341,12 +369,30 @@
 				</div>
 
 			</div>
-		</div>
 
-		<div id="foot">
-			
-		</foot>
+			<div id="foot">
+				<div class="footFont" style="margin-left:250px; margin-top:10px;">
+					<div style="margin-top:10px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">About us</p> 
+						<p><i class="qq icon"></i>QQ: 576156848</p>
+						<p><i class="mail icon"></i>Email: buaaclubs@163.com</p>
+					</div>
+					<div style="margin-top:10px; margin-left: 200px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">Friendly Link</p> 
+						<p>XueBa<a href="http://115.28.39.28/"> http://115.28.39.28/</a></p>
+						<p>Phylab<a href="http://121.42.204.94/"> http://121.42.204.94/</a></p>
+					</div>
+
+					<div style="margin-top:10px; margin-left: 250px; display:inline-block;"> 
+						<p style="color: #e0e0e0; font-size: 2.7em; font-family: cursive;">BuaaClubs</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+<script type="text/javascript">replacePicAndName();</script>
+
+	
 </body>
 
 </html>

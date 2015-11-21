@@ -42,6 +42,8 @@
 					sessionStorage.setItem("token",dataObj.token);
 					sessionStorage.setItem("uid",dataObj.uid);
 					sessionStorage.setItem("name",dataObj.name);
+					sessionStorage.setItem("pic_head",dataObj.headurl);
+					sessionStorage.setItem("clubsigned","true");
 					window.location.href = "http://www.buaaclubs.com/myWeb/new_clubDefault.html";
 				}
 				else
@@ -50,7 +52,27 @@
 				}
 		}	
   	}
+  	function getBack()
+  	{
+  		window.location.href = "myNewHomePage.html";
+  	}
+  	function search()
+  	{
+  		alert("该功能还在开发中");
+  	}
   </script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
 </head>
 
 <body>
@@ -68,7 +90,7 @@
 				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 850px;">
 					<i class="search icon"></i>
 					<input type="text" placeholder="Search~~~" />
-					<div class="ui inverted yellow button">Search</div>
+					<div class="ui inverted yellow button" onclick = "search()">Search</div>
 				</div>
 		</div>
 <!-- 
@@ -123,8 +145,8 @@
 							登 陆
 							<i class="checkmark icon"></i>
 						</div>
-						<div class="ui right grey button">
-							取 消
+						<div class="ui right grey button" onclick = "getBack()">
+							返 回 首 页
 						</div>
 					</div>
 				</div>
@@ -132,6 +154,7 @@
 		</div>
 		
 	</div>
+	
 </body>
 
 </html>

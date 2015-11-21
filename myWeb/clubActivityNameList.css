@@ -29,6 +29,7 @@
 
 #middle {
 	width: 1000px;
+	height: 550px;
 	margin: 0 auto;
 }
 
@@ -75,10 +76,23 @@
 }
 
 .cardContainer {
-	margin-top: 40px;
+	margin-top: 10px;
 }
 
 .logWord {
 	font-family: cursive;
 	font-size: 1.2em;
+}
+
+#foot {
+	height: 100px;
+	margin-top:30px;
+	width: 100%;
+	background: #1c1c1c;
+	clear: both; 
+}
+
+.footFont {
+	color: #b4b5b7;
+	font-size: 0.8em;
 }

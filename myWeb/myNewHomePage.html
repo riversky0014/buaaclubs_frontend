@@ -29,6 +29,7 @@
 		sign_http = new XMLHttpRequest();
 		signUp_http = new XMLHttpRequest();
 		register_http = new XMLHttpRequest();
+		logout_http = new XMLHttpRequest();
 	}
 	else
 	{// code for IE6, IE5
@@ -36,6 +37,7 @@
 		sign_http = new ActiveXObject("Microsoft.XMLHTTP");
 		signUp_http = new ActiveXObject("Microsoft.XMLHTTP");
 		register_http = new ActiveXObject("Microsoft.XMLHTTP");
+		logout_http = new ActiveXObject("Microsoft.XMLHTTP");
 	}
   </script>
   <script type = "text/javascript">
@@ -55,6 +57,12 @@
   	{
   		$("#registerInTable").modal('show');
   	}
+  	function closeSignIn(){
+  		$("#signInTable").modal('hide');
+  	}
+  	function closeRegister(){
+  		$("#registerInTable").modal('hide');
+  	}
   	function registerClick()
   	{
   		var name = document.getElementById("reg_name_input").value;
@@ -62,6 +70,9 @@
   		var pwd = document.getElementById("reg_password_input").value;
   		var check = document.getElementById("reg_check_inupt").value;
   		var tel = document.getElementById("reg_tel_inupt").value;
+  		var email = document.getElementById("reg_email_input").value;
+  		if(email==null)
+  			alert("请输入邮箱");
   		if (pwd != check)
   		{
   			alert("两次输入的密码不一致！");
@@ -69,7 +80,7 @@
   		}
   		register_http.open("POST","http://www.buaaclubs.com/api/register",true);
   		register_http.setRequestHeader("content-type"," ");
-		register_http.send("name=" + name + "&uid=" + number + "&passwd=" + hex_md5(pwd) + "&phone_num=" + tel);	
+		register_http.send("name=" + name + "&uid=" + number + "&passwd=" + hex_md5(pwd) + "&phone_num=" + tel +"&email=" + email);	
 		register_http.onreadystatechange = function()
 		{
 			if (register_http.readyState == 4)
@@ -158,9 +169,14 @@
 					document.getElementById(idd).innerHTML = dataObj.txt[cnt % 5].article_title;
 					document.getElementById(idd).dataset.article_id = dataObj.txt[cnt % 5].article_id.toString();
 					document.getElementById("reg" + cnt.toString()).dataset.article_id = dataObj.txt[cnt % 5].article_id.toString();
+					var oldPic=document.getElementById(idd).parentNode.getElementsByTagName("img")[0];
 					var idd = "abstract" + cnt.toString();
-					document.getElementById(idd).innerHTML = dataObj.txt[cnt % 5].article_abstract;		
-
+					document.getElementById(idd).innerHTML = dataObj.txt[cnt % 5].article_abstract;
+					var Pic = document.createElement('img');
+					Pic.setAttribute('src',dataObj.txt[cnt % 5].head_url);
+					Pic.setAttribute('class',"ui avatar image");
+					Pic.setAttribute('style',"margin-left: 15px; margin-top: 10px;");
+					oldPic.parentNode.replaceChild(Pic,oldPic);
 				}
 				
 			}
@@ -193,7 +209,13 @@
 						new_ele.getElementsByTagName("DIV")[0].getElementsByTagName("DIV")[2].getElementsByTagName("P")[0].innerHTML = dataObj.txt[cnt % 5].article_abstract;
 						new_ele.getElementsByTagName("DIV")[6].dataset.article_id = dataObj.txt[cnt % 5].article_id.toString(); 
 						new_ele.getElementsByTagName("DIV")[0].getElementsByTagName("DIV")[0].getElementsByTagName("SPAN")[0].onclick = function(){showDet(this)};
+						var oldPic=new_ele.getElementsByTagName("img")[0];
+						var Pic = document.createElement('img');
+						Pic.setAttribute('src',dataObj.txt[cnt % 5].head_url);
+						Pic.setAttribute('class',"ui avatar image");
+						Pic.setAttribute('style',"margin-left: 15px; margin-top: 10px;");
 						fa.insertBefore(new_ele,child);
+						oldPic.parentNode.replaceChild(Pic,oldPic);
 					}
 				}
 				else 
@@ -212,19 +234,52 @@
   		sessionStorage.setItem("click_id",obj.dataset.article_id);
 		window.location.href = "userActivityDetails.html";
 	}
-	function closeSign()
-	{
-		document.getElementById("signInTable").style.display = "none";
-	}
-	function closeRegister()
-	{
-		document.getElementById("registerInTable").style.display = "none";
-	}
 	function getSign()
 	{
 		window.location.href = "clubSignIn.html";
 	}
+	function ActSquare()
+	{
+		window.location.href = "myNewHomePage.html";
+	}
+	function sthc()
+	{
+		alert("该功能还在开发中");
+	}
+	function search()
+	{
+		alert("该功能还在开发中");
+	}
+	function logout(){
+		logout_http.open("GET","http://www.buaaclubs.com/api/users/logout");
+		logout_http.setRequestHeader("uid",sessionStorage.uid);
+		logout_http.setRequestHeader("token",sessionStorage.token);
+		logout_http.send();
+		logout_http.onreadystatechange = function()
+		{
+			console.log("logout_http.readyState = ", logout_http.readyState);
+			console.log("logout_http.status = ", logout_http.status);
+			if(logout_http.readyState==4 && logout_http.status==200){
+				console.log("logout_http.readyState = ", logout_http.readyState);
+				console.log("logout_http.status = ", logout_http.status);
+				sessionStorage.clear();
+				window.location.reload();
+			}
+		}
+	}
   </script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
 </head>
 
 <body style="font-size: 14px;">
@@ -309,7 +364,15 @@
 				<div class="ui label">
 					手 机 号
 				</div>
-				<input type="text" placeholder=" 请  输 入 你 的 手 机 号~ " id = "reg_tel_inupt">
+				<input type="text" placeholder=" 请 输 入 你 的 手 机 号~ " id = "reg_tel_inupt">
+			</div>
+		</div>
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					邮 箱
+				</div>
+				<input type="text" placeholder=" 请 输 入 你 的 邮 箱~ " id = "reg_email_input">
 			</div>
 		</div>
 
@@ -336,8 +399,12 @@
 				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 730px;">
 					<i class="search icon"></i>
 					<input type="text" placeholder="Search~~~" />
-					<div class="ui inverted yellow button">Search</div>
+					<div class="ui inverted yellow button" onclick = "search()">Search</div>
 				</div>
+				<!-- <div class="mini ui inverted blue button" style="margin-left:200px; position:fixed; margin-top: 15px;">
+					<i class="sign out icon"></i>
+					 登 出
+				</div> -->
 				<!-- <div class="ui inverted teal button" style="margin-left: 30px;"> 社 团 入 口 </button> -->
 
 				
@@ -361,7 +428,7 @@
 
 						</div> -->
 						<div class="content">
-							<img class="left floated mini ui image" src="images/默认头像.jpg">
+							<img class="left floated mini ui image" src="images/defaultHead.jpg">
 							<a class="header"> 游 客 </a>
 						</div>
 						<div class="extra content">
@@ -378,10 +445,13 @@
 								<img src="images/Buaa.gif">
 							</div> -->
 							<div class="content">
-								<img class="left floated mini ui image" src="images/Buaa.gif">
-								<a class="header" id = "user_name"> 江 昊 </a>
+								<img class="left floated mini ui image" src="images/userHead.gif">
+								<a class="header" id = "user_name"  style="display:inline;"> 江 昊 </a>
 								<!-- <div class="meta">
 									<span class="date">2005年成立</span>
+								</div> -->
+								<!-- <div class="mini ui grey button" style="margin-left:20px; display:inline;" onclick="logout()">
+									<i class="sign out icon"></i>登 出
 								</div> -->
 							</div>
 							<div class="extra content">
@@ -389,6 +459,11 @@
 							</div>
 							<div class="extra content">
 								<a><i class="smile icon"></i> 已 参 加 3 个 社 团 </a>
+							</div>
+							<div class="extra content">
+								<div class="mini ui grey button" style="display:inline; margin-left: 50px;" onclick="logout()">
+									<i class="sign out icon"></i>登 出
+								</div>
 							</div>
 						</div>
 
@@ -398,10 +473,10 @@
 
 					<div class="buttonContainer">
 						<div class="ui vertical labeled icon buttons" style="width: 100%;">
-							<div class="ui teal labeled icon button">  活 动 广 场 
+							<div class="ui teal labeled icon button" style="background-color:#009d95;" onClick = "ActSquare()">  活 动 广 场 
 								<i class="announcement icon"></i>
 							</div>
-							<div class="ui teal labeled icon button"> 社 团 荟 萃
+							<div class="ui teal labeled icon button" onclick = "sthc()"> 社 团 荟 萃
 								 <i class="users icon"></i>
 							</div>
 						</div>
@@ -571,9 +646,25 @@
 			</div>
 		</div>
 
-		<div ip="foot">
+		<div id="foot">
+				<div class="footFont" style="margin-left:250px; margin-top:10px;">
+					<div style="margin-top:10px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">About us</p> 
+						<p><i class="qq icon"></i>QQ: 576156848</p>
+						<p><i class="mail icon"></i>Email: buaaclubs@163.com</p>
+					</div>
+					<div style="margin-top:10px; margin-left: 200px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">Friendly Link</p> 
+						<p>XueBa<a href="http://115.28.39.28/"> http://115.28.39.28/</a></p>
+						<p>Phylab<a href="http://121.42.204.94/"> http://121.42.204.94/</a></p>
+					</div>
 
-		</div>
+					<div style="margin-top:10px; margin-left: 250px; display:inline-block;"> 
+						<p style="color: #e0e0e0; font-size: 2.7em; font-family: cursive;">BuaaClubs</p>
+					</div>
+				</div>
+			</div>
+
 		<script type="text/javascript">
 			showFirst();
 			if (sessionStorage["signed"]=="true"){
@@ -582,7 +673,9 @@
 	  			document.getElementById("user_name").innerHTML = sessionStorage["user_name"];
 			}
 		</script>
+
 	</div>
+	
 </body>
 
 </html>

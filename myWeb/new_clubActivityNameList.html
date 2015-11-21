@@ -11,28 +11,13 @@
 
   <!--<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">-->
 
-  <link rel="stylesheet" type="text/css" href="../dist/semantic.css" />
-  <script src="../dist/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../dist/semantic.css">
   <link rel="stylesheet" type="text/css" href="clubActivityNameList.css" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+  <script src="../dist/semantic.js"></script>
   <script type="text/javascript">
-
-
-  	/*function show(){
-  		if(sessionStorage.number == 0)
-  		{
-  			var news = document.getElementById("news")；//.innerHTML = "无人报名"
-  			news.getElementsByTagName("div")[8].innerHTML = "当 前 活 动 无 人 报 名"
-  		}
-  		else{
-  			for(var n=0; n<sessionStorage.number;n++)
-  			{
-  				var item = document.getElementById("news").news.getElementsByTagName("div")[8];
-  				item.getElementsByTagName("input")[0].dataset.uid = n
-
-  			}
-  		}
-  	}*/
-  	function listdelete(){
+  	function listdelete()
+  	{
   		var xmlhttp;
   		if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -63,31 +48,189 @@
 		}
 
   	}
-    function clubDefault(){
-  	window.location.href = "new_clubDefault.html";
-  }
+  	
+    function clubDefault()
+    {
+  		window.location.href = "new_clubDefault.html";
+  	}
+	function ActivityCreate()
+	{
+	  	window.location.href = "new_clubActivityCreate.html";
+	}
+	function sendMes()
+	{
+		$("#sendMesTable").modal('show');
+	  	// alert("该功能还在开发中");
+	}
+	function sendEma()
+	{
+		$("#sendEmailTable").modal('show');
+	}
+	function cancelMes(){
+		$("#sendMesTable").modal('hide');
+	}
+	function cancelEma(){
+		$("#sendEmailTable").modal('hide');
+	}
+	function SendEmail()
+  	{
+  		var xmlhttp;
+  		if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+         xmlhttp=new XMLHttpRequest();
+         }
+       else
+       {// code for IE6, IE5
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  		}
+  		var max = document.getElementsByTagName("input").length-1;
+  		var jsonObj = "{\"uids\":[";
+  		for(var n = 1;n <=max ; n++)
+  		{
+  			if(document.getElementsByTagName("input")[n].checked==true)
+  				jsonObj +=+document.getElementsByTagName("input")[n].dataset.uid.toString()+",";
+  		}
+  		jsonObj = jsonObj.substring(jsonObj.length-1,0);
+  		jsonObj +="],\"content\":\""+document.getElementById("EmailContent").value+"\",\"article_id\":"+sessionStorage["click_id"]+"}";
 
-  function ActivityCreate(){
-  	window.location.href = "new_clubActivityCreate.html";
-  }</script>
+  		xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/sendemail",true);
+  			//articles/detail/"+sessionStorage["click_id"].toString()+"/list/delete",true);
+  		xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+		xmlhttp.setRequestHeader("token",sessionStorage.token);
+		xmlhttp.send(jsonObj);
+		xmlhttp.onreadystatechange = function()
+		{
+			if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
+				location.reload();
+		}
+
+  	}
+  	function SendMessage()
+  	{
+  		var xmlhttp;
+  		if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+         xmlhttp=new XMLHttpRequest();
+         }
+       else
+       {// code for IE6, IE5
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  		}
+  		var max = document.getElementsByTagName("input").length-1;
+  		var jsonObj = "{\"uids\":[";
+  		for(var n = 1;n <=max ; n++)
+  		{
+  			if(document.getElementsByTagName("input")[n].checked==true)
+  				jsonObj +=+document.getElementsByTagName("input")[n].dataset.uid.toString()+",";
+  		}
+  		jsonObj = jsonObj.substring(jsonObj.length-1,0);
+  		jsonObj +="],\"content\":\""+document.getElementById("MessageContent").value+"\",\"article_id\":"+sessionStorage["click_id"]+"}";
+
+  		xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/sendmessage",true);
+  			//articles/detail/"+sessionStorage["click_id"].toString()+"/list/delete",true);
+  		xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+		xmlhttp.setRequestHeader("token",sessionStorage.token);
+		xmlhttp.send(jsonObj);
+		xmlhttp.onreadystatechange = function()
+		{
+			if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
+				location.reload();
+		}
+
+  	}
+	function search()
+	{
+		alert("该功能还在开发中");
+	}
+	function check(){
+  		if(sessionStorage.clubsigned==undefined)
+  			window.location.href = "clubSignIn.html";
+  	}
+  	function replacePicAndName(){
+  	var oldPic = document.getElementById('middle').getElementsByTagName('img')[0];
+  	var Pic = document.createElement('img');
+  	Pic.setAttribute('src',sessionStorage.pic_head);
+  	oldPic.parentNode.replaceChild(Pic,oldPic);
+  	var oldName = document.getElementById('logContainer').getElementsByTagName('a')[0];
+  	oldName.innerHTML = sessionStorage.name;
+  }
+  	function check(){
+  		if(sessionStorage.clubsigned==undefined)
+  			window.location.href = "clubSignIn.html";
+  	}
+</script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
 </head>
 
 <body>
+	<script type="text/javascript">check();</script>
+	<div class="small ui modal" id="sendMesTable">
+		<i class="close icon"></i>
+		<div class="header">
+			通 知
+		</div>
+		<div class="content">
+			<div class="ui right labeled left icon input">
+  				<i class="mail icon"></i>
+  				<input type="text" placeholder="请输入你的通知~" style="width: 550px;" id = "MessageContent">
+  				<a class="ui blue tag label"> 短信内容 </a>
+			</div>
+		</div>
+
+		<div class="actions">
+			<div class="ui positive labeled icon button" onclick="SendMessage()">
+				发 送
+				<i class="mail icon"></i>
+			</div>
+			<div class="ui right black button" onclick="cancelMes()">
+				取 消
+			</div>
+		</div>
+	</div>
+
+	<div class="small ui modal" id="sendEmailTable">
+		<i class="close icon"></i>
+		<div class="header">
+			通 知
+		</div>
+		<div class="content">
+			<div class="ui right labeled left icon input">
+  				<i class="mail icon"></i>
+  				<input type="text" placeholder="请输入你的通知~" style="width: 550px;" id = "EmailContent">
+  				<a class="ui blue tag label"> Email内容 </a>
+			</div>
+		</div>
+
+		<div class="actions">
+			<div class="ui positive labeled icon button" onclick="SendEmail()">
+				发 送
+				<i class="mail icon"></i>
+			</div>
+			<div class="ui right black button" onclick="cancelEma()">
+				取 消
+			</div>
+		</div>
+	</div>
+
+
 	<div>
 		<div id="gy_masthead">
-				<!-- <div class="ui fluid catagory search" style="margin-top: 8px; margin-right: 155px; float:right;">
-					<div class="ui icon input" style="width: 260px;">
-						<input class="prompt" type="text" placeholder="Please input~~~" />
-						<i class="search icon"></i>
-					</div>
-					<div class="results"></div>
-				</div> -->
-				<!-- <div id="logo"><img src="images/lingfeng.jpg" height="44px" width="44px"/></div> -->
 				<p id="name" style = "margin-top:10px;">BuaaClubs</p>
 				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 850px; position: fixed">
 					<i class="search icon"></i>
 					<input type="text" placeholder="Search~~~" />
-					<div class="ui inverted yellow button">Search</div>
+					<div class="ui inverted yellow button" onClick = "search()">Search</div>
 				</div>
 		</div>
 
@@ -117,51 +260,35 @@
 					</div>
 
 					<div class="buttonContainer" style="margin-top: 15px;">
-						<div class="ui animated teal button" tabindex="0" style="width: 100%;">
-							<div class="visible content" onclick="ActivityCreate()"> 创 建 新 的 活 动 </div>
+						<!-- <div class="ui animated teal button" tabindex="0" style="width: 100%;" onclick="ActivityCreate()">
+							<div class="visible content" > 创 建 新 的 活 动 </div>
 							<div class="hidden content">
 								<i class="add circle icon"></i>
 							</div>
 						</div>
 
-						<div class="ui animated teal button" tabindex="0" style="width: 100%;">
+						<div class="ui animated teal button" tabindex="0" style="width: 100%;" onclick="clubDefault()">
 							<div class="visible content"> 查 看 所 有 活 动 </div>
-							<div class="hidden content" onclick="clubDefault()">
+							<div class="hidden content">
 								<i class="paw icon"></i>
 							</div>
-						</div>
-						<!-- <div class="fluid ui vertical buttons">
-							<button class="large fluid ui black labeled icon button">  活动广场 
-								<i class="announcement icon"></i>
-							</button>
-
-							<button class="large fluid ui black labeled icon button" style="margin-top: 15px;"> 社团荟萃
-								 <i class="users icon"></i>
-							</button>
 						</div> -->
+						<div class="buttonContainer">
+							<div class="ui vertical labeled icon buttons" style="width: 100%;">
+								<div class="ui teal labeled icon button" onclick="clubDefault()"> 后 台 首 页
+								 	<i class="paw icon"></i>
+								</div>
+								<div class="ui teal labeled icon button" onclick="ActivityCreate()">创 建 活 动
+									<i class="add circle icon"></i>
+								</div>
+								
+								<div class="ui teal labeled icon button" onclick="clubDefault()" style="background-color:#009d95;"> 活 动 名 单
+								 	<i class="table icon"></i>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
-
-				<!-- <div id="logblockleft"></div> -->
-
-				<!-- <div id="classifications">
-					<div class="large ui animated yellow button" tabindex="0" style="margin-top: 20px; margin-left: auto; margin-right: auto; float: right;" >
-							<div class="visible content"> 创 建 新 的 活 动 </div>
-							<div class="hidden content" onclick="ActivityCreate()">
-								<i class="add circle icon"></i>
-							</div>
-						</div>
-
-						<div class="large ui animated teal button" tabindex="0" style="margin-top: 15px; margin-left: auto; margin-right: auto; float: right;" >
-							<div class="visible content"> 查 看 所 有 活 动 </div>
-							<div class="hidden content" onclick="clubDefault()">
-								<i class="paw icon"></i>
-							</div>
-						</div>
-					</div>
-				</div>	 -->
-
-				<!-- <div id="logblockleft"></div> -->
 
 				<div id="news">
 					<div class="newsContainer">
@@ -174,6 +301,7 @@
 									<div style="margin-left:35px; display: inline-block; width: 60px;" > 姓 名 </div>
 									<div style="display: inline-block; width: 100px;" > 学 号 </div>
 									<div style="display: inline-block; width: 100px;" > 手 机 号 </div>
+									<div style="display: inline-block; width: 180px;" > 邮 箱 </div>
 									<div style="display: inline-block; width: 100px;" > 日 期 </div>
 									<div style="display: inline-block; width: 70px;" > 备 注 </div>
 								</div>
@@ -185,6 +313,7 @@
 											<div class = "description" style="margin-left:10px; display: inline-block; width: 60px;" ><p id = "_name"></p></div>
 											<div class = "description" style="display: inline-block; width: 100px;" ><p id = "_uid"></p></div>
 											<div class = "description" style="display: inline-block; width: 100px;"><p id = "_phone_number"></p> </div>
+											<div class = "description" style="display: inline-block; width: 180px;"><p id = "_email"></p> </div>
 											<div class = "description" style="display: inline-block; width: 100px;"><p id = "_date"></p> </div>
 											<div class = "description" style="display: inline-block; width: 70px;" ><p id = "_content"></p></div>
 										</lable>
@@ -200,19 +329,13 @@
 										</div>
 									</div>
 
-									<div class="mini ui animated blue button" tabindex="0" style="float:right">
-										<div class="visible content"> 短 信 </div>
-										<div class="hidden content">
-											<i class="mail icon"></i>
-										</div>
+									<div class="mini ui blue button" style="float:right" onclick="sendEma()">
+										Email
 									</div>
-									
-									<!-- <div class="mini ui animated blue button" tabindex="0" style="float:right">
-										<div class="visible content"> 添 加 </div>
-										<div class="hidden content">
-											<i class="add user icon"></i>
-										</div>
-									</div> -->
+									<div class="mini ui blue button" style="float:right" onclick="sendMes()">
+										短 信
+									</div>
+					
 								</div>
 
 							</div>
@@ -222,12 +345,26 @@
 
 			</div>
 		</div>
-
 		<div id="foot">
-			
-		</foot>
+				<div class="footFont" style="margin-left:250px; margin-top:10px;">
+					<div style="margin-top:10px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">About us</p> 
+						<p><i class="qq icon"></i>QQ: 576156848</p>
+						<p><i class="mail icon"></i>Email: buaaclubs@163.com</p>
+					</div>
+					<div style="margin-top:10px; margin-left: 200px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">Friendly Link</p> 
+						<p>XueBa<a href="http://115.28.39.28/"> http://115.28.39.28/</a></p>
+						<p>Phylab<a href="http://121.42.204.94/"> http://121.42.204.94/</a></p>
+					</div>
+
+					<div style="margin-top:10px; margin-left: 250px; display:inline-block;"> 
+						<p style="color: #e0e0e0; font-size: 2.7em; font-family: cursive;">BuaaClubs</p>
+					</div>
+				</div>
+		</div>
 	</div>
-	
+	<script type="text/javascript">replacePicAndName();</script>
 	<script type = "text/javascript">
 		var article_id = sessionStorage["click_id"];
 	  	if (window.XMLHttpRequest)
@@ -259,47 +396,59 @@
   					{
   						if(sessionStorage.number==1)
   						{
-  							var item = document.getElementById("news").getElementsByTagName("div")[9];
+  							var item = document.getElementById("news").getElementsByTagName("div")[10];
   							item.getElementsByTagName("input")[0].dataset.uid = dataObj.txt[0].uid;
   							item.getElementsByTagName("div")[1].innerHTML = dataObj.txt[0].name.toString();
 	  						item.getElementsByTagName("div")[2].innerHTML = dataObj.txt[0].uid.toString();
 	  						item.getElementsByTagName("div")[3].innerHTML = dataObj.txt[0].phone_num.toString();
-	  						item.getElementsByTagName("div")[4].innerHTML = dataObj.txt[0].time.toString().substring(10,0);
+	  						if(dataObj.txt[0].email==null)
+	  							item.getElementsByTagName("div")[4].innerHTML = "注册时未填写";
+	  						else
+	  							item.getElementsByTagName("div")[4].innerHTML = dataObj.txt[0].email.toString();
+	  						item.getElementsByTagName("div")[5].innerHTML = dataObj.txt[0].time.toString().substring(10,0);
 	  						if( dataObj.txt[0].content ==null){
-		  							item.getElementsByTagName("div")[5].innerHTML ="无";
+		  							item.getElementsByTagName("div")[6].innerHTML ="无";
 		  						}
 		  						else
-		  							item.getElementsByTagName("div")[5].innerHTML = dataObj.txt[0].content;
+		  							item.getElementsByTagName("div")[6].innerHTML = dataObj.txt[0].content;
 	  					}
 	  					else{
-	  						var item = document.getElementById("news").getElementsByTagName("div")[9];
+	  						var item = document.getElementById("news").getElementsByTagName("div")[10];
   							item.getElementsByTagName("input")[0].dataset.uid = dataObj.txt[0].uid;
   							item.getElementsByTagName("div")[1].innerHTML = dataObj.txt[0].name.toString();
 	  						item.getElementsByTagName("div")[2].innerHTML = dataObj.txt[0].uid.toString();
 	  						item.getElementsByTagName("div")[3].innerHTML = dataObj.txt[0].phone_num.toString();
-	  						item.getElementsByTagName("div")[4].innerHTML = dataObj.txt[0].time.toString().substring(10,0);
+	  						if(dataObj.txt[0].email==null)
+	  							item.getElementsByTagName("div")[4].innerHTML = "注册时未填写";
+	  						else
+	  							item.getElementsByTagName("div")[4].innerHTML = dataObj.txt[0].email.toString();
+	  						item.getElementsByTagName("div")[5].innerHTML = dataObj.txt[0].time.toString().substring(10,0);
 	  						if( dataObj.txt[0].content ==null){
-		  							item.getElementsByTagName("div")[5].innerHTML ="无";
+		  							item.getElementsByTagName("div")[6].innerHTML ="无";
 		  						}
 		  						else
-		  							item.getElementsByTagName("div")[5].innerHTML = dataObj.txt[0].content;
+		  							item.getElementsByTagName("div")[6].innerHTML = dataObj.txt[0].content;
 							for(var n = 1;n<dataObj.txt.length;n++){
-								var item = document.getElementById("news").getElementsByTagName("div")[9];
+								var item = document.getElementById("news").getElementsByTagName("div")[10];
 								var fa = item.parentNode;
 								var new_item = item.cloneNode(true);
 		  						new_item.getElementsByTagName("input")[0].dataset.uid = dataObj.txt[n].uid;
 		  						new_item.getElementsByTagName("div")[1].innerHTML = dataObj.txt[n].name.toString();
 		  						new_item.getElementsByTagName("div")[2].innerHTML = dataObj.txt[n].uid.toString();
 		  						new_item.getElementsByTagName("div")[3].innerHTML = dataObj.txt[n].phone_num.toString();
-		  						new_item.getElementsByTagName("div")[4].innerHTML = dataObj.txt[n].time.toString().substring(10,0);
-		  						if( dataObj.txt[0].content ==null){
-		  							item.getElementsByTagName("div")[5].innerHTML ="无";
+		  						if(dataObj.txt[n].email==null)
+	  								new_item.getElementsByTagName("div")[4].innerHTML = "注册时未填写";
+	  							else
+	  								new_item.getElementsByTagName("div")[4].innerHTML = dataObj.txt[n].email.toString();
+		  						new_item.getElementsByTagName("div")[5].innerHTML = dataObj.txt[n].time.toString().substring(10,0);
+		  						if( dataObj.txt[n].content ==null){
+		  							new_item.getElementsByTagName("div")[6].innerHTML ="无";
 		  						}
 		  						else
-		  							item.getElementsByTagName("div")[5].innerHTML = dataObj.txt[0].content;
+		  							new_item.getElementsByTagName("div")[6].innerHTML = dataObj.txt[n].content;
 
 								//sessionStorage.uidlist = dataObj.txt[n].uid+ " ";
-								fa.insertBefore(new_item,fa.getElementsByTagName("div")[6+7*n]);
+								fa.insertBefore(new_item,fa.getElementsByTagName("div")[7+8*n]);
 							}
 						}
 					}
@@ -310,6 +459,9 @@
 				}
 		}
 	</script>
+
+
+	
 </body>
 
 </html>

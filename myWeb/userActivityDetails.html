@@ -13,8 +13,126 @@
 
   <link rel="stylesheet" type="text/css" href="../dist/semantic.css" />
   <script src="../dist/semantic.min.js"></script>
+  <script type = "text/javascript" src = "md5.js"></script>
   <link rel="stylesheet" type="text/css" href="userDefault.css" />
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+  <script src="../dist/semantic.js"></script>
   <script>
+
+  	function parseDom(arg) {
+
+　　 var objE = document.createElement("div");
+
+　　 objE.innerHTML = arg;
+
+　　 return objE.childNodes;
+
+	};
+	var cnt = -1;
+  	var xmlhttp;
+  	var sign_http;
+  	var data;
+  	var signUp_http;
+  	var dataObj;
+  	var register_http;
+  	var page = 0;
+  	if (window.XMLHttpRequest)
+	{// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp = new XMLHttpRequest();
+		sign_http = new XMLHttpRequest();
+		signUp_http = new XMLHttpRequest();
+		register_http = new XMLHttpRequest();
+		logout_http = new XMLHttpRequest();
+	}
+	else
+	{// code for IE6, IE5
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		sign_http = new ActiveXObject("Microsoft.XMLHTTP");
+		signUp_http = new ActiveXObject("Microsoft.XMLHTTP");
+		register_http = new ActiveXObject("Microsoft.XMLHTTP");
+		logout_http = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+  	function f2(){
+  		$("#clubSignInTable").modal('show');
+  	}
+  	function signIn()
+  	{
+  		if (sessionStorage["signed"] == "true")
+  		{
+  			alert("请不要重复登陆");
+  			return;
+  		}
+  		$("#signInTable").modal('show');
+  	}
+  	function registerIn()
+  	{
+  		$("#registerInTable").modal('show');
+  	}
+  	function closeSignIn(){
+  		$("#signInTable").modal('hide');
+  	}
+  	function closeRegister(){
+  		$("#registerInTable").modal('hide');
+  	}
+  	function registerClick()
+  	{
+  		var name = document.getElementById("reg_name_input").value;
+  		var number = document.getElementById("reg_number_input").value;
+  		var pwd = document.getElementById("reg_password_input").value;
+  		var check = document.getElementById("reg_check_inupt").value;
+  		var tel = document.getElementById("reg_tel_inupt").value;
+  		if (pwd != check)
+  		{
+  			alert("两次输入的密码不一致！");
+  			return;
+  		}
+  		register_http.open("POST","http://www.buaaclubs.com/api/register",true);
+  		register_http.setRequestHeader("content-type"," ");
+		register_http.send("name=" + name + "&uid=" + number + "&passwd=" + hex_md5(pwd) + "&phone_num=" + tel);	
+		register_http.onreadystatechange = function()
+		{
+			if (register_http.readyState == 4)
+				if (register_http.status == 200)
+				{
+					alert("注册成功");
+				}
+				else
+				{
+					alert("注册失败");
+				}
+		}
+  	}
+  	function signClick()
+  	{
+  		var uid = document.getElementById("number_input").value;
+  		var password = document.getElementById("password_inupt").value;
+  		var md5_password = hex_md5(password);
+  		sign_http.open("POST","http://www.buaaclubs.com/api/users/login",true);
+  		sign_http.setRequestHeader("content-type"," ");
+		sign_http.send("uid=" + uid + "&passwd=" + md5_password);
+		sign_http.onreadystatechange = function()
+		{
+			if (sign_http.readyState == 4)
+				if (sign_http.status == 200)
+				{
+					var data_got = eval("(" + sign_http.response + ")");
+					sessionStorage.setItem("token",data_got.token);
+	  				sessionStorage.setItem("uid",data_got.uid);
+	  				sessionStorage.setItem("user_name",data_got.name);
+	  				sessionStorage.setItem("signed","true");
+	  				document.getElementById("login_card").style.display = "none";
+	  				document.getElementById("user_card").style.display = "block";
+	  				document.getElementById("user_name").innerHTML = data_got.name;
+				}
+				else
+				{
+					alert("用户名和密码不匹配或者用户名不存在");
+				}
+		}
+  	}
+
+
   	function signUp()
   	{
   		var signUp_http;
@@ -28,7 +146,7 @@
 		}
   		if (sessionStorage["signed"] == undefined)
   		{
-  			alert("请先返回上一级登录");
+  			alert("请先登录");
   			return;
   		}
   		var art_id = sessionStorage["click_id"];
@@ -53,10 +171,163 @@
 				}
 		}
   	}
+  	function ActSquare()
+	{
+		window.location.href = "myNewHomePage.html";
+	}
+  	function sthc()
+  	{
+  		alert("该功能还在开发中");
+  	}
+  	function myClub()
+  	{
+  		alert("该功能还在开发中");
+  	}
+  	function message()
+  	{
+  		alert("该功能还在开发中");
+  	}
+  	function actSigned()
+  	{
+  		alert("该功能还在开发中");
+  	}
+  	function set()
+  	{
+  		alert("该功能还在开发中");
+  	}
+  	function search()
+  	{
+  		alert("该功能还在开发中");
+  	}
+
+  	function logout(){
+		logout_http.open("GET","http://www.buaaclubs.com/api/users/logout");
+		logout_http.setRequestHeader("uid",sessionStorage.uid);
+		logout_http.setRequestHeader("token",sessionStorage.token);
+		logout_http.send();
+		logout_http.onreadystatechange = function()
+		{
+			console.log("logout_http.readyState = ", logout_http.readyState);
+			console.log("logout_http.status = ", logout_http.status);
+			if(logout_http.readyState==4 && logout_http.status==200){
+				console.log("logout_http.readyState = ", logout_http.readyState);
+				console.log("logout_http.status = ", logout_http.status);
+				sessionStorage.removeItem("token");
+				sessionStorage.removeItem("uid");
+				sessionStorage.removeItem("name");
+				sessionStorage.removeItem("signed");
+				window.location.reload();
+			}
+		}
+	}
   </script>
+  <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
 </head>
 
 <body>
+<div class="small ui modal" id="signInTable">
+		<i class="close icon"></i>
+		<div class="header">
+			登 陆
+		</div>
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					学 号
+				</div>
+				<input type="text" placeholder=" 请 输 入 你 的 学 号~ " id = "number_input">
+			</div>
+		</div>
+
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					密 码
+				</div>
+				<input type="password" placeholder=" 请 输 入 你 的 密 码~ " id = "password_inupt">
+			</div>
+		</div>
+
+		<div class="actions">
+			<div class="ui positive labeled icon button" onClick = "signClick()">
+				登 陆
+				<i class="checkmark icon"></i>
+			</div>
+			<div class="ui right black button" onClick = "closeSignIn()">
+				取 消
+			</div>
+		</div>
+	</div>
+
+	<div class="small ui modal" id="registerInTable">
+		<i class="close icon"></i>
+		<div class="header">
+			注册
+		</div>
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					姓 名
+				</div>
+				<input type="text" placeholder=" 请 输 入 你 的 姓 名~ " id = "reg_name_input">
+			</div>
+		</div>
+
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					学 号
+				</div>
+				<input type="text" placeholder=" 请 输 入 你 的 学 号~ " id = "reg_number_input">
+			</div>
+		</div>
+
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					密 码
+				</div>
+				<input type="password" placeholder=" 请 输 入 密 码~ " id = "reg_password_input">
+			</div>
+		</div>
+
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					确 认 密 码
+				</div>
+				<input type="password" placeholder=" 请 再 输 入 你 的 密 码~ " id = "reg_check_inupt">
+			</div>
+		</div>
+
+		<div class="content">
+			<div class="ui labled input">
+				<div class="ui label">
+					手 机 号
+				</div>
+				<input type="text" placeholder=" 请  输 入 你 的 手 机 号~ " id = "reg_tel_inupt">
+			</div>
+		</div>
+
+		<div class="actions">
+			<div class="ui positive labeled icon button" onClick = "registerClick()">
+				注 册
+				<i class="checkmark icon"></i>
+			</div>
+			<div class="ui right black button" onClick = "closeRegister()">
+				取 消
+			</div>
+		</div>
+	</div>
 	<div>
 		<div id="gy_masthead">
 				<!-- <div class="ui fluid catagory search" style="margin-top: 8px; margin-right: 155px; float:right;">
@@ -71,7 +342,7 @@
 				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 850px;">
 					<i class="search icon"></i>
 					<input type="text" placeholder="Search~~~" />
-					<div class="ui inverted yellow button">Search</div>
+					<div class="ui inverted yellow button" onClick = "search()">Search</div>
 				</div>
 		</div>
 
@@ -88,8 +359,11 @@
 
 						</div> -->
 						<div class="content">
-							<img class="left floated mini ui image" src="images/默认头像.jpg">
+							<img class="left floated mini ui image" src="images/defaultHead.jpg">
 							<a class="header"> 游 客 </a>
+							<!-- <div class="mini ui grey button" style="margin-left:20px; display:inline;">
+								<i class="sign out icon"></i>登 出
+							</div> -->
 						</div>
 						<div class="extra content">
 							<div class="ui blue labeled icon button" onclick="signIn()" style="width: 100%"> 登 陆 <i class="sign in icon"></i> </div>
@@ -105,17 +379,20 @@
 								<img src="images/Buaa.gif">
 							</div> -->
 							<div class="content">
-								<img class="left floated mini ui image" src="images/Buaa.gif">
-								<a class="header" id = "user_name"> 江 昊 </a>
-								<!-- <div class="meta">
-									<span class="date">2005年成立</span>
-								</div> -->
+								<img class="left floated mini ui image" src="images/userHead.gif">
+								<a class="header" id = "user_name" style="display:inline;"> 江 昊 </a>
+								
 							</div>
 							<div class="extra content">
 								<a><i class="child icon"></i> 已 参 加 10 个 活 动 </a>
 							</div>
 							<div class="extra content">
 								<a><i class="smile icon"></i> 已 参 加 3 个 社 团 </a>
+							</div>
+							<div class="extra content">
+								<div class="mini ui grey button" style="display:inline; margin-left: 50px;" onclick="logout()">
+									<i class="sign out icon"></i>登 出
+								</div>
 							</div>
 						</div>
 					</div>
@@ -126,16 +403,16 @@
 
 					<div class="buttonContainer" style="margin-top: 15px;">
 						<div class="ui vertical labeled icon buttons" style="width: 100%;">
-							<div class="ui teal labeled icon button">  活 动 广 场 
+							<div class="ui teal labeled icon button" onClick = "ActSquare()">  活 动 广 场 
 								<i class="announcement icon"></i>
 							</div>
-							<div class="ui teal labeled icon button"> 社 团 荟 萃
+							<div class="ui teal labeled icon button" onClick = "sthc()"> 社 团 荟 萃
 								 <i class="users icon"></i>
 							</div>
-							<div class="ui teal button"> 我 的 社 团 <i class="users icon"></i></div>
-							<div class="ui teal button"> 已 报 活 动 <i class="smile icon"></i></div>
-							<div class="ui teal button"> 通 知 <i class="file text outline icon"></i></div>
-							<div class="ui teal button"> 设 置 <i class="settings icon"></i></div>
+							<div class="ui teal button" onClick = "myClub()"> 我 的 社 团 <i class="users icon"></i></div>
+							<div class="ui teal button" onClick = "actSigned()"> 已 报 活 动 <i class="smile icon"></i></div>
+							<div class="ui teal button" onClick = "message()"> 通 知 <i class="file text outline icon"></i></div>
+							<div class="ui teal button" onClick = "set()"> 设 置 <i class="settings icon"></i></div>
 						</div>
 					</div>
 
@@ -171,10 +448,10 @@
 									<span style="margin-top:20px; margin-left: 10px;" id = "header"> The fantastic trip </span>
 								</div>
 								<div class="meta" style="margin-top:6px; margin-left: 10px;">
-									<span  style="margin-top:20px; margin-left: 10px;">2 天前</span>
+									<span  style="margin-top:20px; margin-left: 10px;"> </span>
 								</div>
 								<div class="description" id = "content">
-									<p >啦</p>
+									<p id = "article_end"></p>
 								</div>
 							</div>
 
@@ -196,7 +473,24 @@
 				</div>
 
 			</div>
-		</div>
+			<div id="foot">
+				<div class="footFont" style="margin-left:250px; margin-top:10px;">
+					<div style="margin-top:10px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">About us</p> 
+						<p><i class="qq icon"></i>QQ: 576156848</p>
+						<p><i class="mail icon"></i>Email: buaaclubs@163.com</p>
+					</div>
+					<div style="margin-top:10px; margin-left: 200px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">Friendly Link</p> 
+						<p>XueBa<a href="http://115.28.39.28/"> http://115.28.39.28/</a></p>
+						<p>Phylab<a href="http://121.42.204.94/"> http://121.42.204.94/</a></p>
+					</div>
+
+					<div style="margin-top:10px; margin-left: 250px; display:inline-block;"> 
+						<p style="color: #e0e0e0; font-size: 2.7em; font-family: cursive;">BuaaClubs</p>
+					</div>
+				</div>
+			</div>
 
 		<script type="text/javascript">
 			if (sessionStorage["signed"]=="true"){
@@ -206,6 +500,7 @@
 			}
 		</script>
 	</div>
+
 	<script type = "text/javascript">
 		var article_id = sessionStorage["click_id"];
 	  	if (window.XMLHttpRequest)
@@ -226,7 +521,18 @@
 					var data = det_http.response;
 					var dataObj = eval("(" + data + ")");
 					document.getElementById("header").innerHTML = dataObj.title;
+					//var childNodes = parseDom(dataObj.content);
+					//for (var i = 0; i<childNodes.length;i++) document.getElementById("content").insertBefore(childNodes[i],document.getElementById("article_end"));
 					document.getElementById("content").innerHTML = dataObj.content;
+					var oldPic=document.getElementById("header").parentNode.getElementsByTagName("img")[0];
+					var Pic = document.createElement('img');
+					Pic.setAttribute('src',dataObj.head_url);
+					Pic.setAttribute('class',"ui avatar image");
+					Pic.setAttribute('style',"margin-left: 15px; margin-top: 10px;");
+					oldPic.parentNode.replaceChild(Pic,oldPic);
+					// document.getElementById("middle").style.height = document.getElementById("news").style.height;
+
+
 				}
 				else
 				{
@@ -234,6 +540,9 @@
 				}
 		}
 	</script>
+
+	
+	
 </body>
 
 </html>
