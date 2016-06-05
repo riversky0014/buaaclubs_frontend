@@ -32,7 +32,8 @@
   		var md5_pwd = hex_md5(pwd);
   		club_http.open("POST","http://www.buaaclubs.com/api/clubs/login",true);
   		club_http.setRequestHeader("content-type"," ");
-		club_http.send("uid=" + uid + "&passwd=" + md5_pwd);
+		//club_http.send("uid=" + uid + "&passwd=" + md5_pwd);
+		club_http.send("uid=" + uid + "&passwd=" + pwd);
 		club_http.onreadystatechange = function()
 		{
 			if (club_http.readyState == 4)
@@ -43,6 +44,7 @@
 					sessionStorage.setItem("uid",dataObj.uid);
 					sessionStorage.setItem("name",dataObj.name);
 					sessionStorage.setItem("pic_head",dataObj.headurl);
+					sessionStorage.setItem("cata",dataObj.category)
 					sessionStorage.setItem("clubsigned","true");
 					window.location.href = "http://www.buaaclubs.com/myWeb/new_clubDefault.html";
 				}
@@ -54,7 +56,7 @@
   	}
   	function getBack()
   	{
-  		window.location.href = "myNewHomePage.html";
+  		window.location.href = "http://www.buaaclubs.com";
   	}
   	function search()
   	{
@@ -108,7 +110,6 @@ var _hmt = _hmt || [];
     					<input type="password" placeholder="请输入密码~" id = "club_pwd">
   					</div>
 				</div>
-
 				<div style="margin-top: 30px; margin-left: 80px;">	
 				<div class="ui positive labeled icon button" onClick = "clubSign()">
 					登 陆

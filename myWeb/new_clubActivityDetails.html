@@ -14,55 +14,159 @@
   <link rel="stylesheet" type="text/css" href="../dist/semantic.css" />
   <script src="../dist/semantic.min.js"></script>
   <link rel="stylesheet" type="text/css" href="clubDefault.css" />
-
+  <script>
+	  var aid = sessionStorage["click_id"];
+	  var ele;
+	  var fa;
+	  var child;
+  </script>
   <script type="text/javascript">
-  function activityDelete(){
-		var aid = sessionStorage["click_id"];
-		//alert(aid);
-		//xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/"+sessionStorage.uid+"/articles/detail/:art_id_club/delete");
-		xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/articles/detail/"+aid+"/delete");
-		xmlhttp.setRequestHeader("UID",sessionStorage.uid);
+	  var xmlhttp;
+	  if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp = new XMLHttpRequest();
+	  }
+	  else
+	  {// code for IE6, IE5
+		  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  function replacePicAndName(){
+		  var oldPic = document.getElementById('middle').getElementsByTagName('img')[0];
+		  var Pic = document.createElement('img');
+		  Pic.setAttribute('src',sessionStorage.pic_head);
+		  oldPic.parentNode.replaceChild(Pic,oldPic);
+		  var oldName = document.getElementById('logContainer').getElementsByTagName('a')[0];
+		  oldName.innerHTML = sessionStorage.name;
+		  var num=document.getElementById('middle').getElementsByTagName('img');
+		  for (var i = 1; i <num.length; i++) {
+			  var oldPic = document.getElementById('middle').getElementsByTagName('img')[i];
+			  var Pic = document.createElement('img');
+			  Pic.setAttribute('src',sessionStorage.pic_head);
+			  Pic.setAttribute('class',"ui avatar image");
+			  Pic.setAttribute('style',"margin-left: 15px; margin-top: 10px;");
+			  oldPic.parentNode.replaceChild(Pic,oldPic);
+		  };
+		  //<img class="ui avatar image" src="images/lingfeng.jpg"  style="margin-left: 15px; margin-top: 10px;"/>
+	  }
+	  function replaceCateAndNum(){
+  	var oldCata = document.getElementById('logContainer').getElementsByTagName("a")[1];
+  	var oldNum = document.getElementById('logContainer').getElementsByTagName("a")[2];
+  	switch(sessionStorage.cata){
+					case "tiyu":oldCata.innerHTML = "体育类社团"; break;
+					case "shijian":oldCata.innerHTML = "时间类社团"; break;
+					case "keji":oldCata.innerHTML = "科技类社团"; break;
+				}
+  	var xmlhttp;
+  		if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+         xmlhttp=new XMLHttpRequest();
+         }
+       else
+       {// code for IE6, IE5
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  		}
+  		xmlhttp.open("GET","http://www.buaaclubs.com/api/clubs/detail");
+		xmlhttp.setRequestHeader("uid",sessionStorage.uid);
 		xmlhttp.setRequestHeader("token",sessionStorage.token);
-		
 		xmlhttp.send();
+
 		xmlhttp.onreadystatechange = function()
 		{
-			if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
-				sessionStorage.removeItem("art_id_club");
-				window.location.href = "new_clubDefault.html";
+			if(xmlhttp.readyState ==4 && xmlhttp.status ==200){
+				var data = xmlhttp.response;
+				var dataObj = eval("(" + data + ")");
+				oldNum.innerHTML = dataObj.club_num.toString()+" members";
+				}
 		}
-	}
-
-	function activityEdit(){
-		window.location.href = "new_clubActivityEdit.html";
-	}
-
-	function ActivityCreate(){
-		window.location.href = "new_clubActivityCreate.html";
-	}
-
-	function activityList(){
-		window.location.href = "new_clubActivityNameList.html";
-	}
-	function search()
-	{
-		alert("该功能还在开发中");
-	}
-	  function clubDefault(){
-  	window.location.href = "new_clubDefault.html";
   }
+	  function showComment()
+	  {
+		  xmlhttp.open("GET","http://www.buaaclubs.com/api/articles/" + aid.toString() + "/comments",true);
+		  xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+		  xmlhttp.setRequestHeader("token",sessionStorage.token);
+		  xmlhttp.send();
+		  xmlhttp.onreadystatechange = function()
+		  {
+			  if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
+			  {
+				  var data = xmlhttp.response;
+				  var dataObj = eval("(" + data + ")");
+				  var txt = dataObj.txt;
+				  for (var i = 0; i < txt.length; i++)
+				  {
+					  var new_ele = ele.cloneNode(true);
+					  new_ele.getElementsByTagName("img")[0].src = txt[i].user_head;
+					  new_ele.getElementsByTagName("a")[1].innerHTML = txt[i].uid;
+					  new_ele.getElementsByTagName("a")[2].innerHTML = txt[i].name;
+					  new_ele.getElementsByTagName("span")[0].innerHTML = txt[i].time;
+					  new_ele.getElementsByTagName("div")[2].innerHTML = txt[i].content;
+					  new_ele.dataset.type = txt[i].type;
+					  new_ele.dataset.comment_id = txt[i].comment_id;
+					  fa.insertBefore(new_ele,child);
+				  }
+			  }
+		  }
+
+	  }
+	  function activityDelete(){
+			xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/articles/detail/"+aid+"/delete",true);
+			xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+			xmlhttp.setRequestHeader("token",sessionStorage.token);
+
+			xmlhttp.send();
+			xmlhttp.onreadystatechange = function()
+			{
+				if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
+					sessionStorage.removeItem("art_id_club");
+					window.location.href = "new_clubDefault.html";
+			}
+		}
+
+		function activityEdit(){
+			window.location.href = "new_clubActivityEdit.html";
+		}
+
+		function ActivityCreate(){
+			window.location.href = "new_clubActivityCreate.html";
+		}
+
+		function activityList(){
+			window.location.href = "new_clubActivityNameList.html";
+		}
+		function search()
+		{
+			alert("该功能还在开发中");
+		}
+	    function clubDefault(){
+			window.location.href = "new_clubDefault.html";
+	  	}
+	    function reply()
+		{
+			var jsonObj = "{\"content\":\"" + document.getElementById("reply_content").value + "\"}";
+			xmlhttp.open("POST","http://www.buaaclubs.com/api/clubs/articles/" + aid + "/comments/reply/-1",true);
+			xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+			xmlhttp.setRequestHeader("token",sessionStorage.token);
+			xmlhttp.send(jsonObj);
+			xmlhttp.onreadystatechange = function()
+			{
+				if(xmlhttp.readyState ==4)
+					if( xmlhttp.status ==200)
+					  alert("评论成功");
+					else alert("评论失败");
+			}
+		}
 
   </script>
 
 <script>
 var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-function check(){
+	(function() {
+ 		 var hm = document.createElement("script");
+  		hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  		var s = document.getElementsByTagName("script")[0];
+ 		 s.parentNode.insertBefore(hm, s);
+	})();
+	function check(){
   		if(sessionStorage.clubsigned==undefined)
   			window.location.href = "clubSignIn.html";
   	}
@@ -72,17 +176,9 @@ function check(){
 </head>
 
 <body>
-<script type="text/javascript">check();</script>
+<!--<script type="text/javascript">check();</script>-->
 	<div>
 		<div id="gy_masthead">
-				<!-- <div class="ui fluid catagory search" style="margin-top: 8px; margin-right: 155px; float:right;">
-					<div class="ui icon input" style="width: 260px;">
-						<input class="prompt" type="text" placeholder="Please input~~~" />
-						<i class="search icon"></i>
-					</div>
-					<div class="results"></div>
-				</div> -->
-				<!-- <div id="logo"><img src="images/lingfeng.jpg" height="44px" width="44px"/></div> -->
 				<p id="name" style = "margin-top:10px;">BuaaClubs</p>
 				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 850px;">
 					<i class="search icon"></i>
@@ -104,7 +200,7 @@ function check(){
 							<div class="content">
 								<a class="header"> 凌 峰 社 </a>
 								<div class="meta">
-									<span class="date">2005年成立</span>
+									<span class="date"></span>
 								</div>
 							</div>
 							<div class="extra content">
@@ -117,19 +213,6 @@ function check(){
 					</div>
 
 					<div class="buttonContainer" style="margin-top: 15px;">
-						<!-- <div class="ui animated teal button" tabindex="0" style="width: 100%;">
-							<div class="visible content"> 创 建 新 的 活 动 </div>
-							<div class="hidden content" onclick="ActivityCreate()">
-								<i class="add circle icon"></i>
-							</div>
-						</div>
-
-						<div class="ui animated teal button" tabindex="0" style="width: 100%;">
-							<div class="visible content" onclick="clubDefault()"> 查 看 所 有 活 动 </div>
-							<div class="hidden content">
-								<i class="paw icon"></i>
-							</div>
-						</div> -->
 						<div class="buttonContainer">
 							<div class="ui vertical labeled icon buttons" style="width: 100%;">
 								<div class="ui teal labeled icon button" onclick="clubDefault()">后 台 首 页
@@ -141,6 +224,12 @@ function check(){
 								<div class="ui teal labeled icon button" onclick="clubDefault()" style="background-color:#009d95;"> 活 动 详 情
 								 	<i class="content icon"></i>
 								</div>
+								<div class="ui teal labeled icon button"  onclick="ActivityCreate()">查 看 历 史 消 息
+									<i class="mail outline icon"></i>
+								</div>
+								<div class="ui teal labeled icon button"  onclick="ActivityCreate()">社 员 管 理
+									<i class="users icon"></i>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -150,7 +239,6 @@ function check(){
 
 				<div id="news">
 					<div class="newsContainer">
-
 						<div class="ui card" style="width: 100%;">
 							<div class="content">
 								<div class="header">
@@ -160,16 +248,11 @@ function check(){
 								<div class="meta" style="margin-top:6px; margin-left: 10px;">
 									<span  style="margin-top:20px; margin-left: 10px;">2 天前</span>
 								</div>
-								<div class="description" id = "content">
-									<p>啦</p>
+								<div class="description">
+									<p id = "content">啦</p>
 								</div>
 							</div>
-
 							<div class="extra content">
-								<!-- <button class="mini ui grey button" style="float: right"><i class="remove circle icon"></i> 删 除 </button>
-								<button class="mini ui grey button" style="float: right"><i class="edit icon"></i> 编 辑 </button>
-								<button class="mini ui grey button" style="float: right"><i class="table icon"></i> 名 单 </button> -->
-
 								<div class="mini ui animated grey button" tabindex="0" style="float: right">
 									<div class="visible content"> 删 除 </div>
 									<div class="hidden content" onClick="activityDelete()">
@@ -192,10 +275,36 @@ function check(){
 								</div>
 
 							</div>
-						</div>
 
-						
-						
+						<div class="extra content">
+							<div class="ui minimal comments">
+								<h3 class="ui small dividing header"> Comments </h3>
+								<div class="comment" id = "cont">
+									<a class="avatar">
+									  <img src="images/Ali.jpeg">
+									</a>
+									<div class="content">
+										  <a class = "author">13061209</a>
+										  <a class="author">Matt</a>
+										  <div class="metadata">
+											<span class="date">今天下午 5:42</span>
+										  </div>
+										  <div class="text"> 啦啦啦啦啦啦啦啦~ 这个活动太赞了！！ </div>
+										  <div class="actions">
+												<a class="reply" style="font-size: 1.3em">Reply</a>
+											  </div>
+										</div>
+								</div>
+								<form class="ui reply form" id = "last">
+									<div class="field">
+										<textarea id = "reply_content"></textarea>
+									</div>
+									<div>
+										<div class="ui mini blue labeled submit icon button" onclick = "reply()"><i class="icon edit"></i> Add Reply </div>
+									</div>
+								</form>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -222,7 +331,8 @@ function check(){
 		</div>
 	</div>
 	<script type = "text/javascript">
-		var article_id = sessionStorage["click_id"];
+		var article_id = aid;
+		var det_http;
 	  	if (window.XMLHttpRequest)
 		{// code for IE7+, Firefox, Chrome, Opera, Safari
 			det_http = new XMLHttpRequest();
@@ -248,6 +358,13 @@ function check(){
 					alert("error");
 				}
 		}
+		ele = document.getElementById("cont").cloneNode(true);
+		fa = document.getElementById("cont").parentNode;
+		fa.removeChild(document.getElementById("cont"));
+		child = document.getElementById("last");
+		showComment();
+		replacePicAndName();
+		replaceCateAndNum();
 	</script>
 
 

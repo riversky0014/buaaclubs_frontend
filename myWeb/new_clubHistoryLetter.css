@@ -42,17 +42,17 @@
 }
 
 #logContainer {
-	/*position: fixed;            左边栏改为滚动*/
+	/*position: fixed;            左边栏改为滚�?*/
 	width: 200px;
 	display: inline-block;
 	/*border: 1px solid black;*/
-	float: left;   /*左边栏改为滚动*/
+	float: left;    /*左边栏改为滚�?*/
 }
 
 #news {
 	/*position: absolute;*/
 	width: 750px;
-	margin-left: 15px;     /*左边栏改为滚动*/
+	margin-left: 15px;   /*左边栏改为滚�?*/
 	display: inline-block;
 	/*border: 0.5px dashed red;*/
 }
@@ -69,7 +69,7 @@
 	width: 180px;
 	display: inline-block;
 	/*border: 0.5px dashed black;*/
-	margin-left: 800px;
+	margin-left: 810px;
 	margin-top: 15px;
 	float: right;
 }

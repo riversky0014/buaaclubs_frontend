@@ -42,17 +42,17 @@
 }
 
 #logContainer {
-	position: fixed;
+	/*position: fixed;            左边栏改为滚动*/
 	width: 200px;
 	display: inline-block;
 	/*border: 1px solid black;*/
-	/*float: left;*/
+	float: left;   /*左边栏改为滚动*/
 }
 
 #news {
 	/*position: absolute;*/
 	width: 750px;
-	margin-left: 215px;
+	margin-left: 15px;                 /*左边栏改为滚动*/
 	display: inline-block;
 	/*border: 0.5px dashed red;*/
 }

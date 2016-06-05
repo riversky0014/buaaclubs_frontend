@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Standard Meta -->
+  <meta charset="utf-8" />
+  <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">-->
+
+  <!-- Site Properities -->
+  <title>clubHistoryLetter</title>
+
+  <!--<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">-->
+
+  <link rel="stylesheet" type="text/css" href="../dist/semantic.css">
+  <link rel="stylesheet" type="text/css" href="new_clubHistoryLetter.css" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+  <script src="../dist/semantic.js"></script>
+  <script type="text/javascript">
+
+
+	  function clubDefault()
+	  {
+		  window.location.href = "new_clubDefault.html";
+	  }
+	  function ActivityCreate()
+	  {
+		  window.location.href = "new_clubActivityCreate.html";
+	  }
+	  function userAdmin() {
+		  window.location.href = "new_clubUsersAdmin.html";
+	  }
+	  function seeHistory()
+	  {
+		  window.location.href = "new_clubHistoryLetter.html";
+	  }
+
+	function search()
+	{
+		alert("该功能还在开发中");
+	}
+	function check(){
+  		if(sessionStorage.clubsigned==undefined)
+  			window.location.href = "clubSignIn.html";
+  	}
+  	function show(n){
+		var xmlhttp;
+  		if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+         xmlhttp=new XMLHttpRequest();
+         }
+       else
+       {// code for IE6, IE5
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  		}
+
+  		xmlhttp.onreadystatechange = function()
+		{
+			if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
+				location.reload();
+		}
+		xmlhttp.open("GET","http://www.buaaclubs.com/api/clubs/informs/all");
+		xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+		xmlhttp.setRequestHeader("token",sessionStorage.token);
+		xmlhttp.send();
+		xmlhttp.onreadystatechange = function()
+		{
+			if(xmlhttp.readyState == 4 && xmlhttp.status == 200)
+			{
+				var data = xmlhttp.response;
+				var dataObj = eval("(" + data + ")");
+				var l=dataObj.txt.length;
+				var fa = document.getElementById("news").getElementsByTagName("DIV")[3];
+				var ele0 = fa.getElementsByTagName("DIV")[0];//title
+				var ele1 = fa.getElementsByTagName("DIV")[8];//content
+				var new_ele0 = ele0.cloneNode(true);
+				var new_ele1 = ele1.cloneNode(true);
+				for(var i=0;i<l;i++){
+					if(n==0||n==dataObj.txt[i].type+1){
+					var s = "发送给："+dataObj.txt[i].uids.toString()+"\n\n\n 内容："+dataObj.txt[i].content.toString();
+					var time = dataObj.txt[i].time.toString();
+					//xian shi 
+					
+					//zhan shi nei rong
+					fa.insertBefore(new_ele1,ele0);
+					fa.insertBefore(new_ele0,new_ele1);
+					new_ele0.getElementsByTagName("img")[0].src = sessionStorage.pic_head;
+					new_ele0.style.display="block";
+					new_ele1.style.display="block";
+					new_ele0.getElementsByTagName("DIV")[5].innerHTML = time;
+					new_ele1.getElementsByTagName("P")[0].innerHTML = s;
+					//chuang jian xia yi ge 
+					new_ele0 = ele0.cloneNode(true);
+					new_ele1 = ele1.cloneNode(true);
+					}
+				}
+			}
+
+		}
+	}
+	function find(){
+		var fa = document.getElementById("news").getElementsByTagName("DIV")[1];
+		if(fa.getElementsByTagName("A")[0].className=="active item")
+  			return 0;
+  		else if(fa.getElementsByTagName("A")[1].className=="active item")
+  			return 1;
+  		else if(fa.getElementsByTagName("A")[2].className=="active item")
+  			return 2;
+  		else if(fa.getElementsByTagName("A")[2].className=="active item")
+  			return 3;
+
+  	}
+  	function clear(){
+  		var fa = document.getElementById("news").getElementsByTagName("DIV")[3];
+  		var nodelist = fa.childNodes;
+  		var l = nodelist.length-4
+  		for(var i=1;i<l;i++)
+  			fa.removeChild(nodelist[1]);
+  	}
+  	function activeA(){
+  		clear();
+  		var fa = document.getElementById("news");
+  		fa.getElementsByTagName("A")[0].className="active item";
+  		fa.getElementsByTagName("A")[1].className="item";
+  		fa.getElementsByTagName("A")[2].className="item";
+  		fa.getElementsByTagName("A")[3].className="item";
+  		show(0);
+  	}
+  	function activeB(){
+  		clear();
+  		var fa = document.getElementById("news");
+  		fa.getElementsByTagName("A")[0].className="item";
+  		fa.getElementsByTagName("A")[1].className="active item";
+  		fa.getElementsByTagName("A")[2].className="item";
+  		fa.getElementsByTagName("A")[3].className="item";
+  		show(1);
+  	}
+  	function activeC(){
+  		clear();
+  		var fa = document.getElementById("news");
+  		fa.getElementsByTagName("A")[0].className="item";
+  		fa.getElementsByTagName("A")[1].className="item";
+  		fa.getElementsByTagName("A")[2].className="active item";
+  		fa.getElementsByTagName("A")[3].className="item";
+  		show(2);
+  	}
+  	function activeD(){
+  		clear();
+  		var fa = document.getElementById("news");
+  		fa.getElementsByTagName("A")[0].className="item";
+  		fa.getElementsByTagName("A")[1].className="item";
+  		fa.getElementsByTagName("A")[2].className="item";
+  		fa.getElementsByTagName("A")[3].className="active item";
+  		show(3);
+  	}
+  	
+  	function replacePicAndName(){
+  	var oldPic = document.getElementById('middle').getElementsByTagName('img')[0];
+  	var Pic = document.createElement('img');
+  	Pic.setAttribute('src',sessionStorage.pic_head);
+  	oldPic.parentNode.replaceChild(Pic,oldPic);
+  	var oldName = document.getElementById('logContainer').getElementsByTagName('a')[0];
+  	oldName.innerHTML = sessionStorage.name;
+  }
+  function replaceCateAndNum(){
+  	var oldCata = document.getElementById('logContainer').getElementsByTagName("a")[1];
+  	var oldNum = document.getElementById('logContainer').getElementsByTagName("a")[2];
+  	switch(sessionStorage.cata){
+					case "tiyu":oldCata.innerHTML = "体育类社团"; break;
+					case "shijian":oldCata.innerHTML = "时间类社团"; break;
+					case "keji":oldCata.innerHTML = "科技类社团"; break;
+				}
+  	var xmlhttp;
+  		if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+         xmlhttp=new XMLHttpRequest();
+         }
+       else
+       {// code for IE6, IE5
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  		}
+  		xmlhttp.open("GET","http://www.buaaclubs.com/api/clubs/detail");
+		xmlhttp.setRequestHeader("uid",sessionStorage.uid);
+		xmlhttp.setRequestHeader("token",sessionStorage.token);
+		xmlhttp.send();
+
+		xmlhttp.onreadystatechange = function()
+		{
+			if(xmlhttp.readyState ==4 && xmlhttp.status ==200){
+				var data = xmlhttp.response;
+				var dataObj = eval("(" + data + ")");
+				oldNum.innerHTML = dataObj.club_num.toString()+" members";
+				}
+
+			
+		}
+
+
+
+
+  }
+  	function check(){
+  		/*if(sessionStorage.clubsigned==undefined)
+  			window.location.href = "clubSignIn.html";*/
+  	}
+  	function initial()
+  	{
+  		check();
+  	}
+
+
+	
+</script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3666c9cf75dbb1c2a355491d82b6fe81";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+$(document).ready(function(){
+	    $('.ui.accordion').accordion({
+	    	selector: {
+	    		trigger: '.title .icon'
+	    	}
+	    });
+	});
+</script>
+
+
+</head>
+
+<body>
+	<script type="text/javascript">initial();</script>
+	
+	<div>
+		<div id="gy_masthead">
+				<p id="name" style = "margin-top:10px;">BuaaClubs</p>
+				<div class="ui action left icon input" style="margin-top: 8px; margin-left: 850px; position: fixed">
+					<i class="search icon"></i>
+					<input type="text" placeholder="Search~~~" />
+					<div class="ui inverted yellow button" onClick = "search()">Search</div>
+				</div>
+		</div>
+
+		<div id="middle">
+			<div class="blank"></div>
+			<div id="container">
+
+				<div id="logContainer">
+					<div class="cardContainer">
+						<div class="ui yellow card">
+							<div class="image" style="padding 10px;">
+								<img src="images/lingfeng.jpg">
+							</div>
+							<div class="content">
+								<a class="header"> 凌 峰 社 </a>
+								<div class="meta">
+									<span class="date"></span>
+								</div>
+							</div>
+							<div class="extra content">
+								<a><i class="sun icon"></i> 实践类社团 </a>
+							</div>
+							<div class="extra content">
+								<a><i class="user icon"></i> 50 members </a>
+							</div>
+						</div>
+					</div>
+
+					<div class="buttonContainer" style="margin-top: 15px;">
+						<!-- <div class="ui animated teal button" tabindex="0" style="width: 100%;" onclick="ActivityCreate()">
+							<div class="visible content" > 创 建 新 的 活 动 </div>
+							<div class="hidden content">
+								<i class="add circle icon"></i>
+							</div>
+						</div>
+						<div class="ui animated teal button" tabindex="0" style="width: 100%;" onclick="clubDefault()">
+							<div class="visible content"> 查 看 所 有 活 动 </div>
+							<div class="hidden content">
+								<i class="paw icon"></i>
+							</div>
+						</div> -->
+						<div class="buttonContainer">
+							<div class="ui vertical labeled icon buttons" style="width: 100%;">
+								<div class="ui teal labeled icon button" onclick="clubDefault()"> 后 台 首 页
+								 	<i class="paw icon"></i>
+								</div>
+								<div class="ui teal labeled icon button" onclick="ActivityCreate()">创 建 活 动
+									<i class="add circle icon"></i>
+								</div>
+
+								<div class="ui teal labeled icon button"  style="background-color:#009d95;">查 看 历 史 消 息
+									<i class="mail outline icon"></i>
+								</div>
+								<div class="ui teal labeled icon button"  onclick="userAdmin()">社 员 管 理
+									<i class="users icon"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="news">
+					<div class="newsContainer">
+
+						<div class="ui pointing teal menu">
+						  <a class="active item " onclick="activeA()">全 部</a>
+						  <a class="item" onclick="activeB()">站 内 信</a>
+						  <a class="item" onclick="activeC()">短 信</a>
+						  <a class="item" onclick="activeD()">Email</a>
+						</div>
+						<div class="ui segment">
+						  <div class="ui styled accordion" style="width: 700px; margin-top: 20px;" >
+						  <div class="title" style=" display:none"> 
+						  	<i class="dropdown icon"></i>
+						  			<div class="ui feed" style="display:inline-block;">
+							  			<div class="event">
+							  				<div class="label"><img src="images/Ali.jpeg"/></div>
+							  				<div class="content">
+							  					<div class="summary">
+							  						<a class="user"></a> 发出了一条通知 <div class="date"> 1小时前 </div>
+							  					</div>
+							  				</div>
+							  				<div class="ui checkbox" style="margin-left:320px;"><input type="checkbox"><label> </label></div>
+							  			</div>
+						  			</div>
+						  </div>
+						  <div class="content" style=" display:none">
+						    <p>明天十点集合哦~~</p>
+						  </div>
+
+						 
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<div style="font: 0px/0px sans-serif;clear: both;display: block"> </div>
+	</div>
+		<div id="foot">
+				<div class="footFont" style="margin-left:250px; margin-top:10px;">
+					<div style="margin-top:10px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">About us</p> 
+						<p><i class="qq icon"></i>QQ: 576156848</p>
+						<p><i class="mail icon"></i>Email: buaaclubs@163.com</p>
+					</div>
+					<div style="margin-top:10px; margin-left: 200px; display:inline-block;"> 
+						<p style="color: white; font-size: 1.3em;">Friendly Link</p> 
+						<p>XueBa<a href="http://115.28.39.28/"> http://115.28.39.28/</a></p>
+						<p>Phylab<a href="http://121.42.204.94/"> http://121.42.204.94/</a></p>
+					</div>
+
+					<div style="margin-top:10px; margin-left: 250px; display:inline-block;"> 
+						<p style="color: #e0e0e0; font-size: 2.7em; font-family: cursive;">BuaaClubs</p>
+					</div>
+				</div>
+		</div>
+	</div>
+	<script type="text/javascript">show(0);replacePicAndName();replaceCateAndNum();</script>
+
+
+	
+</body>
+
+</html>
